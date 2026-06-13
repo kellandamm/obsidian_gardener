@@ -1,0 +1,1 @@
+# obsidian__plugin
