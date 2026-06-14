@@ -1,0 +1,10 @@
+{
+  "id": "gardener-plugin",
+  "name": "Gardener",
+  "version": "1.0.0",
+  "minAppVersion": "0.15.0",
+  "description": "Turns your vault into a living knowledge garden. Finds ideas, links, conflicts, and cleanup suggestions — powered by local or cloud LLMs. Note content is sent only to your configured provider.",
+  "author": "Kellan Damm",
+  "authorUrl": "https://github.com/kellandamm",
+  "isDesktopOnly": true
+}

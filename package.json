@@ -1,0 +1,30 @@
+{
+  "name": "obsidian-gardener",
+  "version": "1.0.0",
+  "description": "Finds useful ideas, links, conflicts, and cleanup suggestions for Obsidian",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "tsc --noEmit --skipLibCheck && node esbuild.config.mjs production",
+    "package:plugin": "node scripts/package-plugin.mjs",
+    "build:plugin": "npm run build && npm run package:plugin",
+    "lint": "eslint src --ext .ts",
+    "test": "tsc -p tsconfig.test.json && node --test .tmp-tests/test/*.test.js"
+  },
+  "keywords": ["obsidian", "vault", "maintenance", "llm"],
+  "author": "Kellan Damm",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "7.x",
+    "@typescript-eslint/parser": "7.x",
+    "builtin-modules": "3.3.0",
+    "esbuild": "^0.21.0",
+    "obsidian": "latest",
+    "tslib": "2.6.2",
+    "typescript": "5.4.5"
+  },
+  "dependencies": {
+    "minimatch": "^9.0.4"
+  }
+}

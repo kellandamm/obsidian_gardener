@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": ["node"],
+    "outDir": ".tmp-tests"
+  },
+  "include": [
+    "src/schema/**/*.ts",
+    "src/index/VaultIndex.ts",
+    "src/memory/**/*.ts",
+    "src/changeset/**/*.ts",
+    "src/llm/**/*.ts",
+    "src/safety/AuditLog.ts",
+    "test/**/*.ts"
+  ]
+}

@@ -1,0 +1,9 @@
+node_modules/
+main.js
+*.js.map
+.gardener/
+.env
+.tmp-tests/
+plugin-example/
+gardener-design.html
+gardener-spec.md
