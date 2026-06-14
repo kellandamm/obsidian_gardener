@@ -63,15 +63,13 @@ export class MorningReviewView extends ItemView {
           if (id) {
             const menu = new Menu();
             menu.addItem((item) =>
-              item.setTitle("Snooze 7 days").onClick(async () => {
-                await this.engine.snooze(id, 7);
-                this.render();
+              item.setTitle("Snooze 7 days").onClick(() => {
+                void this.engine.snooze(id, 7).then(() => this.render());
               })
             );
             menu.addItem((item) =>
-              item.setTitle("Snooze 30 days").onClick(async () => {
-                await this.engine.snooze(id, 30);
-                this.render();
+              item.setTitle("Snooze 30 days").onClick(() => {
+                void this.engine.snooze(id, 30).then(() => this.render());
               })
             );
             const card = cards[this.focusedIndex];
@@ -156,7 +154,7 @@ export class MorningReviewView extends ItemView {
       const bulk = contentEl.createDiv("gardener-bulk-bar");
 
       const approveAllBtn = bulk.createEl("button", { cls: "gardener-chip on", text: "Accept all" });
-      approveAllBtn.addEventListener("click", async () => {
+      approveAllBtn.addEventListener("click", () => { void (async () => {
         approveAllBtn.setAttr("disabled", "true");
         approveAllBtn.textContent = "Accepting...";
         let accepted = 0;
@@ -178,7 +176,7 @@ export class MorningReviewView extends ItemView {
         } finally {
           this.render();
         }
-      });
+      })(); });
 
       bulk.createEl("span", {
         cls: "gardener-kbd-hint",
@@ -229,14 +227,14 @@ export class MorningReviewView extends ItemView {
 
       for (const staged of sectionItems) {
         const cardEl = renderCard(staged, {
-          onApprove: async (id) => {
-            const ok = await this.engine.apply(id);
-            if (!ok) new Notice("Gardener: skipped stale suggestion. Run Scan vault now to refresh it.");
-            this.render();
+          onApprove: (id) => {
+            void this.engine.apply(id).then((ok) => {
+              if (!ok) new Notice("Gardener: skipped stale suggestion. Run Scan vault now to refresh it.");
+              this.render();
+            });
           },
-          onReject: async (id) => {
-            await this.engine.reject(id);
-            this.render();
+          onReject: (id) => {
+            void this.engine.reject(id).then(() => this.render());
           },
           onRejectWithRule: (id) => {
             new RuleModal(this.app, async (rule) => {
@@ -244,9 +242,8 @@ export class MorningReviewView extends ItemView {
               this.render();
             }).open();
           },
-          onSnooze: async (id, days) => {
-            await this.engine.snooze(id, days as SnoozeDuration);
-            this.render();
+          onSnooze: (id, days) => {
+            void this.engine.snooze(id, days as SnoozeDuration).then(() => this.render());
           },
         });
 
@@ -282,8 +279,8 @@ class RuleModal extends Modal {
     });
     const input = contentEl.createEl("textarea", {
       placeholder: "e.g. Never merge notes that share a tag but have different topics",
+      cls: "gardener-rule-textarea",
     });
-    input.style.cssText = "width:100%;min-height:80px;margin:10px 0;font-size:0.9em;";
 
     const actions = contentEl.createDiv("gardener-wizard-actions");
     const cancel = actions.createEl("button", { cls: "gardener-btn", text: "Cancel" });

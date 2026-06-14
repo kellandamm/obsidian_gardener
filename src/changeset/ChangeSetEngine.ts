@@ -1,7 +1,6 @@
 import type { App } from "obsidian";
 import type { ChangeProposal, StagedProposal, SnoozeDuration } from "./ChangeProposal";
 import { UndoJournal } from "./UndoJournal";
-import type { GardenerSchema } from "../schema/GardenerSchema";
 import type { AuditLog } from "../safety/AuditLog";
 
 const STAGING_FILE = "staging.json";

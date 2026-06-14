@@ -1,4 +1,4 @@
-import { ItemView, WorkspaceLeaf, TFile } from "obsidian";
+import { ItemView, WorkspaceLeaf } from "obsidian";
 
 export const VELOCITY_VIEW_TYPE = "gardener-velocity";
 
@@ -98,14 +98,14 @@ export class WritingVelocityView extends ItemView {
     const halfBar = barW * 0.35;
 
     const ns = "http://www.w3.org/2000/svg";
-    const svg = document.createElementNS(ns, "svg");
+    const svg = activeDocument.createElementNS(ns, "svg");
     svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
     svg.setAttribute("width", "100%");
     svg.classList.add("gardener-velocity-svg");
 
     const yLabel = (val: number) => {
       const y = PAD_T + chartH - (val / maxVal) * chartH;
-      const line = document.createElementNS(ns, "line");
+      const line = activeDocument.createElementNS(ns, "line");
       line.setAttribute("x1", String(PAD_L));
       line.setAttribute("x2", String(PAD_L + chartW));
       line.setAttribute("y1", String(y));
@@ -113,7 +113,7 @@ export class WritingVelocityView extends ItemView {
       line.classList.add("gardener-velocity-grid");
       svg.appendChild(line);
 
-      const text = document.createElementNS(ns, "text");
+      const text = activeDocument.createElementNS(ns, "text");
       text.setAttribute("x", String(PAD_L - 4));
       text.setAttribute("y", String(y + 4));
       text.setAttribute("text-anchor", "end");
@@ -132,7 +132,7 @@ export class WritingVelocityView extends ItemView {
       // modified (background)
       const totalH = ((b.created + b.modified) / maxVal) * chartH;
       if (b.modified > 0 || b.created > 0) {
-        const modRect = document.createElementNS(ns, "rect");
+        const modRect = activeDocument.createElementNS(ns, "rect");
         modRect.setAttribute("x", String(x - halfBar));
         modRect.setAttribute("y", String(PAD_T + chartH - totalH));
         modRect.setAttribute("width", String(halfBar * 2));
@@ -144,7 +144,7 @@ export class WritingVelocityView extends ItemView {
       // created (foreground, stacked on top)
       const createdH = (b.created / maxVal) * chartH;
       if (b.created > 0) {
-        const createdRect = document.createElementNS(ns, "rect");
+        const createdRect = activeDocument.createElementNS(ns, "rect");
         createdRect.setAttribute("x", String(x - halfBar));
         createdRect.setAttribute("y", String(PAD_T + chartH - createdH));
         createdRect.setAttribute("width", String(halfBar * 2));
@@ -155,7 +155,7 @@ export class WritingVelocityView extends ItemView {
 
       // x-axis label — every 3 weeks to avoid crowding
       if (i % 3 === 0) {
-        const label = document.createElementNS(ns, "text");
+        const label = activeDocument.createElementNS(ns, "text");
         label.setAttribute("x", String(x));
         label.setAttribute("y", String(H - PAD_B + 14));
         label.setAttribute("text-anchor", "middle");
@@ -165,6 +165,6 @@ export class WritingVelocityView extends ItemView {
       }
     });
 
-    return svg as unknown as SVGElement;
+    return svg as SVGElement;
   }
 }

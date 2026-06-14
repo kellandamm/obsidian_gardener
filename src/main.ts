@@ -1,4 +1,4 @@
-import { Plugin, WorkspaceLeaf, Notice, TFile, normalizePath } from "obsidian";
+import { Plugin, Notice, TFile, normalizePath } from "obsidian";
 import { parseGardenerSchema } from "./schema/parseSchema";
 import { DEFAULT_SCHEMA, DEFAULT_GARDENER_MD } from "./schema/defaultSchema";
 import type { GardenerSchema, SchemaValidationError } from "./schema/GardenerSchema";
@@ -117,7 +117,7 @@ const DEFAULT_SETTINGS: GardenerSettings = {
   wikiConceptsFolder: "wiki/concepts",
   wikiIndexFile: "wiki/index.md",
   wikiLogFile: "wiki/log.md",
-  wikiExcludedFolders: ".obsidian, .gardener, Templates",
+  wikiExcludedFolders: ".gardener, Templates",
   wikiConceptMinClaims: 3,
   agentIntegration: "none",
   agentSchemaFile: "",
@@ -235,22 +235,22 @@ export default class GardenerPlugin extends Plugin {
     this.addCommand({
       id: "open-morning-review",
       name: "Open Suggestions",
-      callback: () => this.activateReviewView(),
+      callback: () => { void this.activateReviewView(); },
     });
     this.addCommand({
       id: "open-resurfacing",
       name: "Open Writing Context sidebar",
-      callback: () => this.activateView(RESURFACING_VIEW_TYPE),
+      callback: () => { void this.activateView(RESURFACING_VIEW_TYPE); },
     });
     this.addCommand({
       id: "open-dashboard",
       name: "Open Legacy Vault Health Dashboard",
-      callback: () => this.activateView(DASHBOARD_VIEW_TYPE),
+      callback: () => { void this.activateView(DASHBOARD_VIEW_TYPE); },
     });
     this.addCommand({
       id: "open-undo-history",
       name: "Open Change History",
-      callback: () => this.activateView(UNDO_HISTORY_VIEW_TYPE),
+      callback: () => { void this.activateView(UNDO_HISTORY_VIEW_TYPE); },
     });
     this.addCommand({
       id: "open-schema-library",
@@ -260,22 +260,22 @@ export default class GardenerPlugin extends Plugin {
     this.addCommand({
       id: "open-velocity",
       name: "Open Writing Velocity chart",
-      callback: () => this.activateView(VELOCITY_VIEW_TYPE),
+      callback: () => { void this.activateView(VELOCITY_VIEW_TYPE); },
     });
     this.addCommand({
       id: "open-graph-gaps",
       name: "Open Legacy Knowledge Graph Gaps",
-      callback: () => this.activateView(GRAPH_GAPS_VIEW_TYPE),
+      callback: () => { void this.activateView(GRAPH_GAPS_VIEW_TYPE); },
     });
     this.addCommand({
       id: "open-wiki-memory",
-      name: "Open Gardener Home",
-      callback: () => this.activateView(WIKI_MEMORY_VIEW_TYPE),
+      name: "Open Home",
+      callback: () => { void this.activateView(WIKI_MEMORY_VIEW_TYPE); },
     });
     this.addCommand({
       id: "run-now",
       name: "Scan vault now",
-      callback: () => this.runPipeline(),
+      callback: () => { void this.runPipeline(); },
     });
 
     this.addRibbonIcon("leaf", "Gardener", () => this.openLauncher());
@@ -399,7 +399,7 @@ export default class GardenerPlugin extends Plugin {
     ];
 
     const index = this.indexer.getIndex();
-    const allFindings = [];
+    const allFindings: import("./tasks/Task").Finding[] = [];
 
     for (const task of tasks) {
       try {
@@ -476,7 +476,7 @@ export default class GardenerPlugin extends Plugin {
       }
     }
 
-    if (reviewCount > 0) this.activateReviewView();
+    if (reviewCount > 0) void this.activateReviewView();
   }
 
   async activateReviewView(): Promise<void> {
@@ -574,13 +574,13 @@ export default class GardenerPlugin extends Plugin {
         icon: "🏠",
         label: "Gardener Home",
         description: "Topics, saved ideas, sources, conflicts",
-        action: () => this.activateView(WIKI_MEMORY_VIEW_TYPE),
+        action: () => { void this.activateView(WIKI_MEMORY_VIEW_TYPE); },
       },
       {
         icon: "✅",
         label: "Suggestions",
         description: "Review proposed links, canonical notes, and cleanup (card view)",
-        action: () => this.activateReviewView(),
+        action: () => { void this.activateReviewView(); },
       },
       {
         icon: "📋",
@@ -592,31 +592,31 @@ export default class GardenerPlugin extends Plugin {
         icon: "✍️",
         label: "Writing Context",
         description: "Related concepts surfaced while you write",
-        action: () => this.activateView(RESURFACING_VIEW_TYPE),
+        action: () => { void this.activateView(RESURFACING_VIEW_TYPE); },
       },
       {
         icon: "📈",
         label: "Writing Velocity",
         description: "Word count trends over time",
-        action: () => this.activateView(VELOCITY_VIEW_TYPE),
+        action: () => { void this.activateView(VELOCITY_VIEW_TYPE); },
       },
       {
         icon: "🕸️",
         label: "Graph Gaps",
         description: "Under-connected notes and missing links",
-        action: () => this.activateView(GRAPH_GAPS_VIEW_TYPE),
+        action: () => { void this.activateView(GRAPH_GAPS_VIEW_TYPE); },
       },
       {
         icon: "📊",
         label: "Vault Dashboard",
         description: "Orphans, broken links, stubs at a glance",
-        action: () => this.activateView(DASHBOARD_VIEW_TYPE),
+        action: () => { void this.activateView(DASHBOARD_VIEW_TYPE); },
       },
       {
         icon: "↩️",
         label: "Change History",
         description: "Browse and undo applied changes",
-        action: () => this.activateView(UNDO_HISTORY_VIEW_TYPE),
+        action: () => { void this.activateView(UNDO_HISTORY_VIEW_TYPE); },
       },
       {
         icon: "🔍",
@@ -629,8 +629,8 @@ export default class GardenerPlugin extends Plugin {
 
   async applyWikiWriterToGardenerMd(): Promise<void> {
     const file = this.app.vault.getAbstractFileByPath(SCHEMA_PATH);
-    if (!file) return;
-    let content = await this.app.vault.read(file as TFile);
+    if (!(file instanceof TFile)) return;
+    let content = await this.app.vault.read(file);
     const s = this.settings;
     const wikiWriterBlock = [
       "\n## Wiki Writer",
@@ -647,7 +647,7 @@ export default class GardenerPlugin extends Plugin {
     } else {
       content = content.trimEnd() + "\n" + wikiWriterBlock + "\n";
     }
-    await this.app.vault.process(file as TFile, () => content);
+    await this.app.vault.process(file, () => content);
     await this.audit?.writeInternal(SCHEMA_PATH, "applied wiki writer settings", "wiki-writer-setup");
     await this.reloadSchemaForSettings();
   }
@@ -662,8 +662,8 @@ export default class GardenerPlugin extends Plugin {
     const targetPath = normalizePath(agentSchemaFile || agentSchemaFilePath(agentIntegration));
     const content = buildAgentSchema(agentIntegration, this.settings);
     const existing = this.app.vault.getAbstractFileByPath(targetPath);
-    if (existing) {
-      await this.app.vault.process(existing as TFile, () => content);
+    if (existing instanceof TFile) {
+      await this.app.vault.process(existing, () => content);
     } else {
       const dir = targetPath.split("/").slice(0, -1).join("/");
       if (dir) {
@@ -725,7 +725,8 @@ export default class GardenerPlugin extends Plugin {
         this.schemaErrors = [];
         return;
       }
-      const content = await this.app.vault.read(file as TFile);
+      if (!(file instanceof TFile)) return;
+      const content = await this.app.vault.read(file);
       const { schema, errors } = parseGardenerSchema(content);
       this.schema = schema;
       this.schemaErrors = errors;
@@ -742,21 +743,21 @@ export default class GardenerPlugin extends Plugin {
 
   private async appendRuleToSchema(rule: string): Promise<void> {
     const file = this.app.vault.getAbstractFileByPath(SCHEMA_PATH);
-    if (!file) return;
-    const content = await this.app.vault.read(file as TFile);
+    if (!(file instanceof TFile)) return;
+    const content = await this.app.vault.read(file);
     const rulesHeader = "## Rules";
     const idx = content.indexOf(rulesHeader);
     if (idx === -1) return;
     const insertAt = idx + rulesHeader.length;
     const newContent = content.slice(0, insertAt) + `\n- ${rule}` + content.slice(insertAt);
-    await this.app.vault.modify(file as TFile, newContent);
+    await this.app.vault.modify(file, newContent);
     await this.audit?.writeInternal(SCHEMA_PATH, "appended rejection rule", "schema-feedback");
   }
 
   private async applyWizardSettings(settings: GardenerSettings): Promise<void> {
     const file = this.app.vault.getAbstractFileByPath(SCHEMA_PATH);
-    if (!file) return;
-    let content = await this.app.vault.read(file as TFile);
+    if (!(file instanceof TFile)) return;
+    let content = await this.app.vault.read(file);
     if (settings.vaultPurpose) {
       content = content.replace(/^purpose:.*$/m, `purpose: ${settings.vaultPurpose}`);
     }
@@ -769,7 +770,7 @@ export default class GardenerPlugin extends Plugin {
     if (!content.includes("## Folder Rules")) {
       content += `\n## Folder Rules\n${folderRulesForStyle(settings.vaultStyle, settings.privacyPosture)}\n`;
     }
-    await this.app.vault.modify(file as TFile, content);
+    await this.app.vault.modify(file, content);
     await this.audit?.writeInternal(SCHEMA_PATH, "applied first-run wizard settings", "first-run");
   }
 }
@@ -809,7 +810,7 @@ export function buildAgentSchema(agent: import("./main").AgentIntegration, s: Ga
   const conceptsFolder = s.wikiConceptsFolder || "wiki/concepts";
   const indexFile = s.wikiIndexFile || "wiki/index.md";
   const logFile = s.wikiLogFile || "wiki/log.md";
-  const excluded = s.wikiExcludedFolders || ".obsidian, .gardener, Templates";
+  const excluded = s.wikiExcludedFolders || ".gardener, Templates";
 
   return `# ${name} — Wiki Schema
 > Auto-generated by Gardener on ${today}. Re-run "Generate agent schema" in Gardener settings to update.

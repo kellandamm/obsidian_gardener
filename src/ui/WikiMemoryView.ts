@@ -87,18 +87,16 @@ export class WikiMemoryView extends ItemView {
     });
     const heroActions = hero.createDiv("gardener-memory-hero-actions");
     const run = heroActions.createEl("button", { cls: "gardener-btn approve", text: "Scan vault" });
-    run.addEventListener("click", async () => {
+    run.addEventListener("click", () => { void (async () => {
       run.disabled = true;
       run.textContent = "Scanning...";
       await this.runPipeline();
       this.render();
-    });
+    })(); });
     const review = heroActions.createEl("button", { cls: "gardener-btn", text: `Review suggestions${pendingProposals.length ? ` (${pendingProposals.length})` : ""}` });
     review.addEventListener("click", () => this.openReviewQueue());
     const exportGraph = heroActions.createEl("button", { cls: "gardener-btn", text: "Export graph" });
-    exportGraph.addEventListener("click", async () => {
-      await this.exportMemoryGraph();
-    });
+    exportGraph.addEventListener("click", () => { void this.exportMemoryGraph(); });
 
     this.renderWorkflow(contentEl, {
       notes: notes.length,
@@ -232,15 +230,13 @@ export class WikiMemoryView extends ItemView {
     const accept = actions.createEl("button", { cls: "gardener-btn approve", text: "Save idea" });
     const reject = actions.createEl("button", { cls: "gardener-btn reject", text: "Reject" });
     const open = actions.createEl("button", { cls: "gardener-btn", text: "Open source" });
-    accept.addEventListener("click", async (e) => {
+    accept.addEventListener("click", (e) => {
       e.stopPropagation();
-      await this.reviewStore.setStatus(claim, "accepted");
-      this.render();
+      void this.reviewStore.setStatus(claim, "accepted").then(() => this.render());
     });
-    reject.addEventListener("click", async (e) => {
+    reject.addEventListener("click", (e) => {
       e.stopPropagation();
-      await this.reviewStore.setStatus(claim, "rejected");
-      this.render();
+      void this.reviewStore.setStatus(claim, "rejected").then(() => this.render());
     });
     open.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -367,16 +363,15 @@ export class WikiMemoryView extends ItemView {
 
   private renderContradictionButton(parent: HTMLElement, pair: ContradictoryClaimPair, text: string, status: Parameters<MemoryReviewStore["setSyntheticStatus"]>[3]): void {
     const button = parent.createEl("button", { cls: "gardener-btn", text });
-    button.addEventListener("click", async (e) => {
+    button.addEventListener("click", (e) => {
       e.stopPropagation();
-      await this.reviewStore.setSyntheticStatus(
+      void this.reviewStore.setSyntheticStatus(
         pair.id,
         "claim",
         `${pair.a.label} <-> ${pair.b.label}`,
         status,
         pair.a.provenance[0]?.path
-      );
-      this.render();
+      ).then(() => this.render());
     });
   }
 
@@ -423,15 +418,14 @@ export class WikiMemoryView extends ItemView {
             text: status === "hub-queued" ? "Main note queued" : "Make main note",
           });
           queue.disabled = status === "hub-queued";
-          queue.addEventListener("click", async (e) => {
+          queue.addEventListener("click", (e) => {
             e.stopPropagation();
-            await this.reviewStore.setStatus(node, "hub-queued");
-            this.render();
+            void this.reviewStore.setStatus(node, "hub-queued").then(() => this.render());
           });
         }
       }
-      item.addEventListener("click", () => this.openNote(paths[0]));
-      item.style.cursor = "pointer";
+      item.addEventListener("click", () => void this.openNote(paths[0]));
+      item.addClass("gardener-clickable");
     }
   }
 
@@ -453,8 +447,8 @@ export class WikiMemoryView extends ItemView {
         event.stopPropagation();
         this.renderClaimEditor(item, title, claim);
       });
-      item.addEventListener("click", () => this.openNote(prov.path));
-      item.style.cursor = "pointer";
+      item.addEventListener("click", () => void this.openNote(prov.path));
+      item.addClass("gardener-clickable");
     }
   }
 
@@ -469,11 +463,12 @@ export class WikiMemoryView extends ItemView {
     const input = editor.createEl("textarea");
     input.value = this.reviewStore.getEditedLabel(claim.id) ?? claim.label;
     const save = editor.createEl("button", { cls: "gardener-btn approve", text: "Save wording" });
-    save.addEventListener("click", async (event) => {
+    save.addEventListener("click", (event) => {
       event.stopPropagation();
-      await this.reviewStore.setEditedLabel(claim, input.value);
-      title.textContent = this.reviewStore.getEditedLabel(claim.id) ?? claim.label;
-      editor.remove();
+      void this.reviewStore.setEditedLabel(claim, input.value).then(() => {
+        title.textContent = this.reviewStore.getEditedLabel(claim.id) ?? claim.label;
+        editor.remove();
+      });
     });
   }
 

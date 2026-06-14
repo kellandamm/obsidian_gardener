@@ -1,7 +1,7 @@
 import { Modal, App, Notice } from "obsidian";
 import type { ChangeSetEngine } from "../changeset/ChangeSetEngine";
 import type { StagedProposal } from "../changeset/ChangeProposal";
-import { classifyProposal, familyInfo, PROPOSAL_FAMILIES } from "../tasks/proposalFamilies";
+import { classifyProposal, familyInfo } from "../tasks/proposalFamilies";
 import type { ProposalFamily } from "../tasks/proposalFamilies";
 
 export class BatchReviewModal extends Modal {
@@ -41,13 +41,9 @@ export class BatchReviewModal extends Modal {
 
     const globalActions = header.createDiv("gardener-batch-global-actions");
     const acceptAllBtn = globalActions.createEl("button", { text: "Accept all", cls: "gardener-btn gardener-btn-accept" });
-    acceptAllBtn.addEventListener("click", async () => {
-      await this.applyAll(pending);
-    });
+    acceptAllBtn.addEventListener("click", () => { void this.applyAll(pending); });
     const rejectAllBtn = globalActions.createEl("button", { text: "Reject all", cls: "gardener-btn gardener-btn-reject" });
-    rejectAllBtn.addEventListener("click", async () => {
-      await this.rejectAll(pending);
-    });
+    rejectAllBtn.addEventListener("click", () => { void this.rejectAll(pending); });
 
     // Keyboard hint
     header.createEl("p", { text: "Click a row to expand diff. Space = toggle, A = accept selected, R = reject selected.", cls: "gardener-batch-hint" });
@@ -75,16 +71,16 @@ export class BatchReviewModal extends Modal {
 
     const acceptSelBtn = bar.createEl("button", { text: "Accept selected", cls: "gardener-btn gardener-btn-accept" });
     acceptSelBtn.disabled = true;
-    acceptSelBtn.addEventListener("click", async () => {
+    acceptSelBtn.addEventListener("click", () => {
       const toApply = pending.filter((p) => this.selected.has(p.proposal.id));
-      await this.applyAll(toApply);
+      void this.applyAll(toApply);
     });
 
     const rejectSelBtn = bar.createEl("button", { text: "Reject selected", cls: "gardener-btn gardener-btn-reject" });
     rejectSelBtn.disabled = true;
-    rejectSelBtn.addEventListener("click", async () => {
+    rejectSelBtn.addEventListener("click", () => {
       const toReject = pending.filter((p) => this.selected.has(p.proposal.id));
-      await this.rejectAll(toReject);
+      void this.rejectAll(toReject);
     });
 
     // Update bar on checkbox change
@@ -150,9 +146,9 @@ export class BatchReviewModal extends Modal {
     });
 
     groupActions.createEl("button", { text: "Accept all", cls: "gardener-btn gardener-btn-accept gardener-btn-sm" })
-      .addEventListener("click", async () => { await this.applyAll(proposals); });
+      .addEventListener("click", () => { void this.applyAll(proposals); });
     groupActions.createEl("button", { text: "Reject all", cls: "gardener-btn gardener-btn-reject gardener-btn-sm" })
-      .addEventListener("click", async () => { await this.rejectAll(proposals); });
+      .addEventListener("click", () => { void this.rejectAll(proposals); });
 
     const rows = section.createDiv("gardener-batch-rows");
     for (const staged of proposals) {
@@ -185,7 +181,7 @@ export class BatchReviewModal extends Modal {
         cls: "gardener-btn-link",
       });
       const diffEl = row.createDiv("gardener-batch-diff");
-      diffEl.style.display = this.expandedDiff.has(proposal.id) ? "block" : "none";
+      if (!this.expandedDiff.has(proposal.id)) diffEl.addClass("is-hidden");
 
       for (const line of proposal.diff) {
         const lineEl = diffEl.createEl("div", { cls: `gardener-diff-line gardener-diff-${line.kind}` });
@@ -195,9 +191,8 @@ export class BatchReviewModal extends Modal {
       diffToggle.addEventListener("click", (e) => {
         e.stopPropagation();
         const open = !this.expandedDiff.has(proposal.id);
-        if (open) this.expandedDiff.add(proposal.id);
-        else this.expandedDiff.delete(proposal.id);
-        diffEl.style.display = open ? "block" : "none";
+        if (open) { this.expandedDiff.add(proposal.id); diffEl.removeClass("is-hidden"); }
+        else { this.expandedDiff.delete(proposal.id); diffEl.addClass("is-hidden"); }
         diffToggle.textContent = open ? "▲ Hide diff" : "▼ Show diff";
       });
     }
@@ -205,14 +200,14 @@ export class BatchReviewModal extends Modal {
     // Per-row accept/reject
     const rowActions = row.createDiv("gardener-batch-row-actions");
     rowActions.createEl("button", { text: "✓", cls: "gardener-btn gardener-btn-accept gardener-btn-icon", title: "Accept" })
-      .addEventListener("click", async (e) => {
+      .addEventListener("click", (e) => {
         e.stopPropagation();
-        await this.applyAll([staged]);
+        void this.applyAll([staged]);
       });
     rowActions.createEl("button", { text: "✗", cls: "gardener-btn gardener-btn-reject gardener-btn-icon", title: "Reject" })
-      .addEventListener("click", async (e) => {
+      .addEventListener("click", (e) => {
         e.stopPropagation();
-        await this.rejectAll([staged]);
+        void this.rejectAll([staged]);
       });
 
     // Click row body to toggle checkbox

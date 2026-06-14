@@ -23,12 +23,12 @@ export class ResurfacingSidebarView extends ItemView {
   async onOpen(): Promise<void> {
     // Update sidebar whenever the active file changes
     this.registerEvent(
-      this.app.workspace.on("active-leaf-change", () => this.updateForActiveFile())
+      this.app.workspace.on("active-leaf-change", () => { void this.updateForActiveFile(); })
     );
     this.registerEvent(
       this.app.vault.on("modify", () => {
         this.engineBuilt = false;
-        this.updateForActiveFile();
+        void this.updateForActiveFile();
       })
     );
     await this.updateForActiveFile();
@@ -78,7 +78,7 @@ export class ResurfacingSidebarView extends ItemView {
       item.createEl("b", { text: entry?.title ?? path });
       item.createEl("span", { text: `${entry?.wordCount ?? 0} words` });
       item.addEventListener("click", () => this.openNote(path));
-      item.style.cursor = "pointer";
+      item.addClass("gardener-clickable");
     });
 
     // ── Semantically related (TF-IDF on metadata) ────────
@@ -89,7 +89,7 @@ export class ResurfacingSidebarView extends ItemView {
       item.createEl("b", { text: entry?.title ?? path });
       item.createEl("span", { text: `${Math.round(score * 100)}% similar`, cls: "gardener-sb-score" });
       item.addEventListener("click", () => this.openNote(path));
-      item.style.cursor = "pointer";
+      item.addClass("gardener-clickable");
     });
 
     // ── Related by shared tags ────────────────────────────
@@ -100,7 +100,7 @@ export class ResurfacingSidebarView extends ItemView {
       item.createEl("b", { text: entry?.title ?? path });
       item.createEl("span", { text: shared.map((t) => `#${t}`).join(" ") });
       item.addEventListener("click", () => this.openNote(path));
-      item.style.cursor = "pointer";
+      item.addClass("gardener-clickable");
     });
 
     // ── Similar titles ────────────────────────────────────
@@ -111,7 +111,7 @@ export class ResurfacingSidebarView extends ItemView {
       item.createEl("b", { text: entry?.title ?? path });
       item.createEl("span", { text: `${Math.round(score * 100)}% match`, cls: "gardener-sb-score" });
       item.addEventListener("click", () => this.openNote(path));
-      item.style.cursor = "pointer";
+      item.addClass("gardener-clickable");
     });
 
     // ── Unlinked mentions of current note ────────────────
@@ -122,7 +122,7 @@ export class ResurfacingSidebarView extends ItemView {
       item.createEl("b", { text: entry?.title ?? path });
       item.createEl("span", { text: "mentions this note without a link" });
       item.addEventListener("click", () => this.openNote(path));
-      item.style.cursor = "pointer";
+      item.addClass("gardener-clickable");
     });
   }
 

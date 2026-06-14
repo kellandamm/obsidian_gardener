@@ -16,6 +16,14 @@
   --gardener-radius: 10px;
 }
 
+/* ── Component-specific helpers ─────────────────────────── */
+.gardener-rule-textarea { width: 100%; min-height: 80px; margin: 10px 0; font-size: 0.9em; }
+
+/* ── Utility classes ────────────────────────────────────── */
+.gardener-clickable { cursor: pointer; }
+.is-hidden { display: none; }
+.gardener-status-block { display: block; }
+
 /* ── Morning Review View ────────────────────────────────── */
 .gardener-review-view {
   font-family: var(--font-interface);
@@ -212,7 +220,7 @@
   color: var(--gardener-del);
   background: rgba(224, 133, 133, 0.08);
   display: block;
-  text-decoration: line-through;
+  text-decoration-line: line-through;
   text-decoration-color: rgba(224, 133, 133, 0.5);
 }
 
@@ -529,8 +537,8 @@
   color: var(--text-muted);
 }
 
-.gardener-sb-score {
-  color: var(--gardener-violet) !important;
+.gardener-sb-section .gardener-sb-item .gardener-sb-score {
+  color: var(--gardener-violet);
   font-family: var(--font-monospace);
 }
 

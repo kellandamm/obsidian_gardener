@@ -1,5 +1,5 @@
 export async function cooperativeYield(): Promise<void> {
-  await new Promise<void>((resolve) => setTimeout(resolve, 0));
+  await new Promise<void>((resolve) => window.setTimeout(resolve, 0));
 }
 
 export async function yieldEvery(index: number, batchSize: number): Promise<void> {

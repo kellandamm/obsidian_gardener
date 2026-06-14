@@ -1,4 +1,5 @@
-import type { App, TFile } from "obsidian";
+import type { App } from "obsidian";
+import { TFile } from "obsidian";
 import type { Task, Finding } from "./Task";
 import type { VaultIndex } from "../index/VaultIndex";
 import type { GardenerSchema } from "../schema/GardenerSchema";
@@ -88,7 +89,8 @@ export class WikiSourceSummaryTask implements Task {
 
     // Build set of folders to exclude (wiki output folders + user exclusions)
     const wikiRoot = conceptsFolder ? conceptsFolder.split("/")[0] : "wiki";
-    const alwaysExclude = [wikiRoot, ".obsidian", ".gardener"];
+    const configDir = this.app.vault.configDir;
+    const alwaysExclude = [wikiRoot, configDir, ".gardener"];
     const userExclude = cfg ? cfg.excludedFolders : (schema.wikiMemory.rawFolders.length > 0 ? [] : []);
     const excludedFolders = [...new Set([...alwaysExclude, ...userExclude])];
 
@@ -107,8 +109,8 @@ export class WikiSourceSummaryTask implements Task {
     let count = 0;
 
     for (const note of candidates) {
-      const file = this.app.vault.getAbstractFileByPath(note.path) as TFile | null;
-      if (!file) continue;
+      const file = this.app.vault.getAbstractFileByPath(note.path);
+      if (!(file instanceof TFile)) continue;
 
       let content: string;
       try {

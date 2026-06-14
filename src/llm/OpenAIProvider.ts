@@ -12,7 +12,7 @@ export type FetchLike = (url: string, init?: RequestInit) => Promise<{
 const obsidianFetch: FetchLike = async (url, init) => {
   const res = await requestUrl({
     url,
-    method: (init?.method ?? "GET") as string,
+    method: init?.method ?? "GET",
     headers: init?.headers as Record<string, string> | undefined,
     body: init?.body as string | undefined,
     throw: false,

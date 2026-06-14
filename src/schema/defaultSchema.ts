@@ -7,7 +7,7 @@ export const DEFAULT_SCHEMA: GardenerSchema = {
     tone: "neutral",
   },
   protected: {
-    neverWrite: ["Templates/**", ".obsidian/**"],
+    neverWrite: ["Templates/**"],
     neverRead: [],
   },
   conventions: {
@@ -66,7 +66,6 @@ tone: neutral
 ## Protected
 never-write:
   - Templates/**
-  - .obsidian/**
 never-read:
 
 ## Conventions

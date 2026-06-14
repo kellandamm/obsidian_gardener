@@ -243,7 +243,6 @@ export class GardenerSettingsTab extends PluginSettingTab {
         s
           .setLimits(5, 100, 5)
           .setValue(this.plugin.settings.batchSize)
-          .setDynamicTooltip()
           .onChange(async (v) => {
             this.plugin.settings.batchSize = v;
             await this.plugin.saveSettings();
@@ -263,7 +262,6 @@ export class GardenerSettingsTab extends PluginSettingTab {
         s
           .setLimits(0, 1, 0.05)
           .setValue(this.plugin.settings.autoApproveThreshold)
-          .setDynamicTooltip()
           .onChange(async (v) => {
             this.plugin.settings.autoApproveThreshold = v;
             await this.plugin.saveSettings();
@@ -427,7 +425,7 @@ export class GardenerSettingsTab extends PluginSettingTab {
           const result = await this.plugin.setupKarpathyLayout();
           btn.setDisabled(false);
           btn.setButtonText(result.created > 0 ? `Done — ${result.created} items created ✓` : "Already set up ✓");
-          setTimeout(() => btn.setButtonText("Set up layout"), 3000);
+          window.setTimeout(() => btn.setButtonText("Set up layout"), 3000);
         })
       );
 
@@ -488,9 +486,9 @@ export class GardenerSettingsTab extends PluginSettingTab {
 
       new Setting(containerEl)
         .setName("Excluded folders")
-        .setDesc("Comma-separated folders to skip when scanning for sources. Gardener always skips wiki output folders and .obsidian automatically.")
+        .setDesc("Comma-separated folders to skip when scanning for sources. Gardener always skips wiki output folders and the config folder automatically.")
         .addText((t) =>
-          t.setPlaceholder(".obsidian, Templates, Archive")
+          t.setPlaceholder("Templates, Archive")
             .setValue(this.plugin.settings.wikiExcludedFolders)
             .onChange(async (v) => { this.plugin.settings.wikiExcludedFolders = v; await this.plugin.saveSettings(); })
         );
@@ -523,7 +521,7 @@ export class GardenerSettingsTab extends PluginSettingTab {
               btn.setButtonText("Failed ✗");
             } finally {
               btn.setDisabled(false);
-              setTimeout(() => btn.setButtonText("Apply & update GARDENER.md"), 2500);
+              window.setTimeout(() => btn.setButtonText("Apply & update GARDENER.md"), 2500);
             }
           })
         );
@@ -573,7 +571,7 @@ export class GardenerSettingsTab extends PluginSettingTab {
               btn.setButtonText("Failed ✗");
             } finally {
               btn.setDisabled(false);
-              setTimeout(() => btn.setButtonText(`Generate ${agentFile}`), 2500);
+              window.setTimeout(() => btn.setButtonText(`Generate ${agentFile}`), 2500);
             }
           })
         );

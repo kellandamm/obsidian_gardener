@@ -151,9 +151,8 @@ export class FirstRunModal extends Modal {
 
     const actions = contentEl.createDiv("gardener-wizard-actions");
     const finish = actions.createEl("button", { cls: "gardener-btn approve", text: "Finish Setup" });
-    finish.addEventListener("click", async () => {
-      await this.onComplete(this.settings);
-      this.close();
+    finish.addEventListener("click", () => {
+      void this.onComplete(this.settings).then(() => this.close());
     });
   }
 

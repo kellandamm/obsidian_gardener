@@ -12,7 +12,7 @@ export type RunAtCallback = () => string;
 export class Scheduler {
   private app: App;
   private dataDir: string;
-  private intervalId: ReturnType<typeof setInterval> | null = null;
+  private intervalId: number | null = null;
   private onRun: RunCallback;
   private getRunAt: RunAtCallback;
   private running = false;
@@ -29,15 +29,16 @@ export class Scheduler {
     const shouldRunNow = this.isStale(lastRun, this.getRunAt());
     if (shouldRunNow) await this.fire();
 
-    this.intervalId = setInterval(async () => {
-      const lr = await this.loadLastRun();
-      if (this.isStale(lr, this.getRunAt())) await this.fire();
+    this.intervalId = window.setInterval(() => {
+      void this.loadLastRun().then((lr) => {
+        if (this.isStale(lr, this.getRunAt())) void this.fire();
+      });
     }, POLL_INTERVAL_MS);
   }
 
   stop(): void {
     if (this.intervalId !== null) {
-      clearInterval(this.intervalId);
+      window.clearInterval(this.intervalId);
       this.intervalId = null;
     }
   }

@@ -65,7 +65,7 @@ export class UndoHistoryView extends ItemView {
         cls: "gardener-btn gardener-history-undo",
         text: "Undo",
       });
-      undoBtn.addEventListener("click", async () => {
+      undoBtn.addEventListener("click", () => { void (async () => {
         undoBtn.setAttr("disabled", "true");
         undoBtn.textContent = "Reverting…";
         const ok = await this.engine.undo(entry.id);
@@ -77,7 +77,7 @@ export class UndoHistoryView extends ItemView {
           undoBtn.removeAttribute("disabled");
           undoBtn.textContent = "Undo";
         }
-      });
+      })(); });
     }
   }
 

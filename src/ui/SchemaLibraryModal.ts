@@ -49,14 +49,13 @@ export class SchemaLibraryModal extends Modal {
       text: "Select a template above to preview its GARDENER.md",
       cls: "gardener-schema-preview-hint",
     });
-    const previewCode = preview.createEl("pre", { cls: "gardener-schema-preview-code" });
-    previewCode.style.display = "none";
+    const previewCode = preview.createEl("pre", { cls: "gardener-schema-preview-code is-hidden" });
 
     // Update preview on card click
     grid.addEventListener("click", () => {
       if (!this.selected) return;
-      previewLabel.style.display = "none";
-      previewCode.style.display = "block";
+      previewLabel.addClass("is-hidden");
+      previewCode.removeClass("is-hidden");
       previewCode.textContent = this.selected.content;
     });
 
@@ -70,9 +69,9 @@ export class SchemaLibraryModal extends Modal {
     applyBtn.setAttr("disabled", "true");
 
     cancelBtn.addEventListener("click", () => this.close());
-    applyBtn.addEventListener("click", async () => {
+    applyBtn.addEventListener("click", () => {
       if (!this.selected) return;
-      await this.applyTemplate(this.selected);
+      void this.applyTemplate(this.selected);
     });
   }
 

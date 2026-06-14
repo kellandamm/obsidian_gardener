@@ -1,4 +1,5 @@
-import type { App, TFile, TAbstractFile } from "obsidian";
+import type { App, TAbstractFile } from "obsidian";
+import { TFile } from "obsidian";
 import { minimatch } from "minimatch";
 import {
   type VaultIndex,
@@ -128,9 +129,9 @@ export class Indexer {
   private registerEvents(): void {
     const onModify = async (...args: unknown[]) => {
       const file = args[0] as TAbstractFile;
-      if ((file as TFile).extension !== "md") return;
+      if (!(file instanceof TFile) || file.extension !== "md") return;
       if (this.isProtected(file.path)) return;
-      await this.indexFile(file as TFile);
+      await this.indexFile(file);
       await saveIndex(this.app, this.dataDir, this.index);
     };
 
@@ -144,8 +145,8 @@ export class Indexer {
       const file = args[0] as TAbstractFile;
       const oldPath = args[1] as string;
       removeNote(this.index, oldPath);
-      if ((file as TFile).extension === "md" && !this.isProtected(file.path)) {
-        await this.indexFile(file as TFile);
+      if (file instanceof TFile && file.extension === "md" && !this.isProtected(file.path)) {
+        await this.indexFile(file);
       }
       await saveIndex(this.app, this.dataDir, this.index);
     };

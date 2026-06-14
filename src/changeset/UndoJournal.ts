@@ -45,7 +45,7 @@ export class UndoJournal {
     if (!entry) return false;
     const file = app.vault.getAbstractFileByPath(entry.targetPath);
     if (entry.existedBefore === false) {
-      if (file) await app.vault.delete(file);
+      if (file) await app.fileManager.trashFile(file);
       this.entries = this.entries.filter((e) => e.id !== journalId);
       await this.save();
       return true;

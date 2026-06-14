@@ -67,7 +67,7 @@ export class KnowledgeGraphView extends ItemView {
             text: note?.title ?? path,
             cls: "gardener-graph-chip",
           });
-          chip.addEventListener("click", () => this.openNote(path));
+          chip.addEventListener("click", () => void this.openNote(path));
         }
         if (island.length > 4) {
           list.createEl("span", {
@@ -128,7 +128,7 @@ export class KnowledgeGraphView extends ItemView {
       return i !== j;
     }));
 
-    const table = document.createElement("table");
+    const table = activeDocument.createElement("table");
     table.className = "gardener-heatmap";
 
     const thead = table.createEl("thead");

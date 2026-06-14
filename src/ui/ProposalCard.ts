@@ -28,7 +28,7 @@ const MEMORY_TASKS = new Set([
 
 export function renderCard(staged: StagedProposal, callbacks: CardCallbacks): HTMLElement {
   const { proposal, status } = staged;
-  const card = document.createElement("div");
+  const card = activeDocument.createElement("div");
   card.className = "gardener-card";
   card.dataset.id = proposal.id;
 
@@ -79,7 +79,7 @@ export function renderCard(staged: StagedProposal, callbacks: CardCallbacks): HT
     approveBtn.addEventListener("click", () => callbacks.onApprove(proposal.id));
     rejectBtn.addEventListener("click", () => callbacks.onReject(proposal.id));
     ruleBtn.addEventListener("click", () => callbacks.onRejectWithRule(proposal.id));
-    snoozeBtn.addEventListener("click", (e) => {
+    snoozeBtn.addEventListener("click", (e: MouseEvent) => {
       e.stopPropagation();
       showSnoozeMenu(snoozeBtn, proposal.id, callbacks.onSnooze);
     });
@@ -95,13 +95,12 @@ export function renderCard(staged: StagedProposal, callbacks: CardCallbacks): HT
       status === "approved"
         ? proposal.operation === "replace-file" ? "✓ approved" : "✓ acknowledged"
         : "✕ rejected";
-    statusEl.style.display = "block";
+    statusEl.addClass("gardener-status-block");
   }
 
   // Learn banner (shown when rejected with rule)
   if (staged.rejectionReason) {
-    const learnBanner = card.createDiv("gardener-learn-banner");
-    learnBanner.style.display = "block";
+    const learnBanner = card.createDiv("gardener-learn-banner gardener-status-block");
     learnBanner.appendText("Rule added to GARDENER.md: ");
     learnBanner.createEl("b", { text: staged.rejectionReason });
   }
@@ -110,15 +109,16 @@ export function renderCard(staged: StagedProposal, callbacks: CardCallbacks): HT
 }
 
 function showSnoozeMenu(
+  this: void,
   anchor: HTMLElement,
   id: string,
   onSnooze: (id: string, days: 7 | 30) => void
 ): void {
   // Simple inline snooze picker — avoids importing Obsidian Menu in this module
-  const existing = document.querySelector(".gardener-snooze-popup");
+  const existing = activeDocument.querySelector(".gardener-snooze-popup");
   existing?.remove();
 
-  const popup = document.createElement("div");
+  const popup = activeDocument.createElement("div");
   popup.className = "gardener-snooze-popup";
 
   const opt7 = popup.createEl("button", { cls: "gardener-snooze-opt", text: "Snooze 7 days" });
@@ -128,12 +128,16 @@ function showSnoozeMenu(
   opt30.addEventListener("click", () => { onSnooze(id, 30); popup.remove(); });
 
   const rect = anchor.getBoundingClientRect();
-  popup.style.cssText =
-    `position:fixed;top:${rect.bottom + 4}px;left:${rect.left}px;z-index:9999;`;
+  popup.setCssProps({
+    "position": "fixed",
+    "top": `${rect.bottom + 4}px`,
+    "left": `${rect.left}px`,
+    "z-index": "9999",
+  });
 
-  document.body.appendChild(popup);
+  activeDocument.body.appendChild(popup);
   const dismiss = (e: MouseEvent) => {
-    if (!popup.contains(e.target as Node)) { popup.remove(); document.removeEventListener("click", dismiss); }
+    if (!popup.contains(e.target as Node)) { popup.remove(); activeDocument.removeEventListener("click", dismiss); }
   };
-  setTimeout(() => document.addEventListener("click", dismiss), 0);
+  window.setTimeout(() => activeDocument.addEventListener("click", dismiss), 0);
 }
