@@ -11,7 +11,12 @@
     "lint": "eslint src --ext .ts",
     "test": "tsc -p tsconfig.test.json && node --test .tmp-tests/test/*.test.js"
   },
-  "keywords": ["obsidian", "vault", "maintenance", "llm"],
+  "keywords": [
+    "obsidian",
+    "vault",
+    "maintenance",
+    "llm"
+  ],
   "author": "Kellan Damm",
   "license": "MIT",
   "devDependencies": {
@@ -19,7 +24,7 @@
     "@typescript-eslint/eslint-plugin": "7.x",
     "@typescript-eslint/parser": "7.x",
     "builtin-modules": "3.3.0",
-    "esbuild": "^0.21.0",
+    "esbuild": "^0.28.1",
     "obsidian": "latest",
     "tslib": "2.6.2",
     "typescript": "5.4.5"
