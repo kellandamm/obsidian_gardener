@@ -1,4 +1,5 @@
-import { ItemView, WorkspaceLeaf } from "obsidian";
+import { ItemView } from "obsidian";
+import type { WorkspaceLeaf } from "obsidian";
 
 export const VELOCITY_VIEW_TYPE = "gardener-velocity";
 

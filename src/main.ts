@@ -222,7 +222,7 @@ export default class GardenerPlugin extends Plugin {
         this.canonicalRegistry,
         this.engine,
         () => this.runPipeline(),
-        () => this.activateReviewView(),
+        () => { void this.activateReviewView(); },
         () => this.schema,
         () => this.settings.privacyPosture,
         () => this.settings.llmProvider,
@@ -688,7 +688,7 @@ export default class GardenerPlugin extends Plugin {
 
     const existing = workspace.getLeavesOfType(viewType);
     if (existing.length > 0) {
-      workspace.revealLeaf(existing[0]);
+      await workspace.revealLeaf(existing[0]);
       if (viewType === DASHBOARD_VIEW_TYPE) {
         (existing[0].view as DashboardView).refresh();
       }
@@ -700,11 +700,11 @@ export default class GardenerPlugin extends Plugin {
 
     const leaf = workspace.getRightLeaf(false) ?? workspace.getLeaf(true);
     await leaf.setViewState({ type: viewType, active: true });
-    workspace.revealLeaf(leaf);
+    await workspace.revealLeaf(leaf);
   }
 
   private async loadSettings(): Promise<void> {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData() as Partial<GardenerSettings>);
   }
 
   private async ensureDataDir(): Promise<void> {

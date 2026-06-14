@@ -130,7 +130,7 @@ export class BatchReviewModal extends Modal {
 
     const groupActions = groupHeader.createDiv("gardener-batch-group-actions");
 
-    const selectAllCb = groupActions.createEl("input", { type: "checkbox" }) as HTMLInputElement;
+    const selectAllCb = groupActions.createEl("input", { type: "checkbox" });
     selectAllCb.title = "Select all in group";
     selectAllCb.addEventListener("change", () => {
       const checkboxes = section.querySelectorAll<HTMLInputElement>("input[type=checkbox][data-proposal-id]");
@@ -161,7 +161,7 @@ export class BatchReviewModal extends Modal {
     const row = container.createDiv("gardener-batch-row");
     row.dataset.id = proposal.id;
 
-    const cb = row.createEl("input", { type: "checkbox", cls: "gardener-batch-cb" }) as HTMLInputElement;
+    const cb = row.createEl("input", { type: "checkbox", cls: "gardener-batch-cb" });
     cb.dataset.proposalId = proposal.id;
 
     const info = row.createDiv("gardener-batch-row-info");

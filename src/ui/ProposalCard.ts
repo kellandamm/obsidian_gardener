@@ -128,11 +128,10 @@ function showSnoozeMenu(
   opt30.addEventListener("click", () => { onSnooze(id, 30); popup.remove(); });
 
   const rect = anchor.getBoundingClientRect();
+  popup.addClass("gardener-snooze-popup");
   popup.setCssProps({
-    "position": "fixed",
-    "top": `${rect.bottom + 4}px`,
-    "left": `${rect.left}px`,
-    "z-index": "9999",
+    "--gardener-popup-top": `${rect.bottom + 4}px`,
+    "--gardener-popup-left": `${rect.left}px`,
   });
 
   activeDocument.body.appendChild(popup);

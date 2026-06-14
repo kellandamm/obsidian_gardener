@@ -23,6 +23,12 @@
 .gardener-clickable { cursor: pointer; }
 .is-hidden { display: none; }
 .gardener-status-block { display: block; }
+.gardener-snooze-popup {
+  position: fixed;
+  z-index: 9999;
+  top: var(--gardener-popup-top);
+  left: var(--gardener-popup-left);
+}
 
 /* ── Morning Review View ────────────────────────────────── */
 .gardener-review-view {
@@ -220,8 +226,7 @@
   color: var(--gardener-del);
   background: rgba(224, 133, 133, 0.08);
   display: block;
-  text-decoration-line: line-through;
-  text-decoration-color: rgba(224, 133, 133, 0.5);
+  text-decoration: line-through rgba(224, 133, 133, 0.5);
 }
 
 .gardener-diff .ctx {

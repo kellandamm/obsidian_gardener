@@ -112,7 +112,7 @@ export class KnowledgeGraphView extends ItemView {
     const n = tags.length;
 
     // Count co-occurrences
-    const co = Array.from({ length: n }, () => new Array(n).fill(0));
+    const co: number[][] = Array.from({ length: n }, () => new Array<number>(n).fill(0));
     for (const note of notes.values()) {
       const tagSet = new Set(note.tags);
       for (let i = 0; i < n; i++) {

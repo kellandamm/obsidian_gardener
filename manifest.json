@@ -2,7 +2,7 @@
   "id": "gardener",
   "name": "Gardener",
   "version": "1.0.0",
-  "minAppVersion": "1.4.16",
+  "minAppVersion": "1.7.7",
   "description": "Turns your vault into a living knowledge garden. Finds ideas, links, conflicts, and cleanup suggestions — powered by local or cloud LLMs. Note content is sent only to your configured provider.",
   "author": "Kellan Damm",
   "authorUrl": "https://github.com/kellandamm",

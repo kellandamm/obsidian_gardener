@@ -419,14 +419,14 @@ export class GardenerSettingsTab extends PluginSettingTab {
       .setName("Build Karpathy layout")
       .setDesc("Creates raw/, wiki/, and all sub-folders plus starter files (GARDENER.md, wiki/index.md, wiki/log.md). Safe to run on an existing vault.")
       .addButton((btn) =>
-        btn.setButtonText("Set up layout").onClick(async () => {
+        btn.setButtonText("Set up layout").onClick(() => { void (async () => {
           btn.setDisabled(true);
           btn.setButtonText("Creating…");
           const result = await this.plugin.setupKarpathyLayout();
           btn.setDisabled(false);
           btn.setButtonText(result.created > 0 ? `Done — ${result.created} items created ✓` : "Already set up ✓");
           window.setTimeout(() => btn.setButtonText("Set up layout"), 3000);
-        })
+        })(); })
       );
 
     // ── Wiki Writer ───────────────────────────────────────
@@ -509,7 +509,7 @@ export class GardenerSettingsTab extends PluginSettingTab {
         .setName("Sync to GARDENER.md")
         .setDesc("Write your Wiki Writer configuration back into GARDENER.md so agents can read it.")
         .addButton((btn) =>
-          btn.setButtonText("Apply & update GARDENER.md").onClick(async () => {
+          btn.setButtonText("Apply & update GARDENER.md").onClick(() => { void (async () => {
             btn.setDisabled(true);
             btn.setButtonText("Updating…");
             try {
@@ -523,7 +523,7 @@ export class GardenerSettingsTab extends PluginSettingTab {
               btn.setDisabled(false);
               window.setTimeout(() => btn.setButtonText("Apply & update GARDENER.md"), 2500);
             }
-          })
+          })(); })
         );
     }
 
@@ -559,7 +559,7 @@ export class GardenerSettingsTab extends PluginSettingTab {
         .setName(`Generate ${agentFile} now`)
         .setDesc(`Create or overwrite ${agentFile} with the current Gardener wiki schema. After this, open the file and point your agent at it.`)
         .addButton((btn) =>
-          btn.setButtonText(`Generate ${agentFile}`).setCta().onClick(async () => {
+          btn.setButtonText(`Generate ${agentFile}`).setCta().onClick(() => { void (async () => {
             btn.setDisabled(true);
             btn.setButtonText("Generating…");
             try {
@@ -573,7 +573,7 @@ export class GardenerSettingsTab extends PluginSettingTab {
               btn.setDisabled(false);
               window.setTimeout(() => btn.setButtonText(`Generate ${agentFile}`), 2500);
             }
-          })
+          })(); })
         );
     }
 
@@ -631,9 +631,9 @@ export class GardenerSettingsTab extends PluginSettingTab {
     const open = actions.createEl("button", { cls: "gardener-btn", text: "Open GARDENER.md" });
     open.addEventListener("click", () => void this.plugin.openGardenerSchema());
     const refresh = actions.createEl("button", { cls: "gardener-btn", text: "Recheck" });
-    refresh.addEventListener("click", async () => {
+    refresh.addEventListener("click", () => { void (async () => {
       await this.plugin.reloadSchemaForSettings();
       this.display();
-    });
+    })(); });
   }
 }

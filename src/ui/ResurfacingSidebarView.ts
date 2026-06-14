@@ -77,7 +77,7 @@ export class ResurfacingSidebarView extends ItemView {
       const item = el.createDiv("gardener-sb-item");
       item.createEl("b", { text: entry?.title ?? path });
       item.createEl("span", { text: `${entry?.wordCount ?? 0} words` });
-      item.addEventListener("click", () => this.openNote(path));
+      item.addEventListener("click", () => { void this.openNote(path); });
       item.addClass("gardener-clickable");
     });
 
@@ -88,7 +88,7 @@ export class ResurfacingSidebarView extends ItemView {
       const item = el.createDiv("gardener-sb-item");
       item.createEl("b", { text: entry?.title ?? path });
       item.createEl("span", { text: `${Math.round(score * 100)}% similar`, cls: "gardener-sb-score" });
-      item.addEventListener("click", () => this.openNote(path));
+      item.addEventListener("click", () => { void this.openNote(path); });
       item.addClass("gardener-clickable");
     });
 
@@ -99,7 +99,7 @@ export class ResurfacingSidebarView extends ItemView {
       const item = el.createDiv("gardener-sb-item");
       item.createEl("b", { text: entry?.title ?? path });
       item.createEl("span", { text: shared.map((t) => `#${t}`).join(" ") });
-      item.addEventListener("click", () => this.openNote(path));
+      item.addEventListener("click", () => { void this.openNote(path); });
       item.addClass("gardener-clickable");
     });
 
@@ -110,7 +110,7 @@ export class ResurfacingSidebarView extends ItemView {
       const item = el.createDiv("gardener-sb-item");
       item.createEl("b", { text: entry?.title ?? path });
       item.createEl("span", { text: `${Math.round(score * 100)}% match`, cls: "gardener-sb-score" });
-      item.addEventListener("click", () => this.openNote(path));
+      item.addEventListener("click", () => { void this.openNote(path); });
       item.addClass("gardener-clickable");
     });
 
@@ -121,7 +121,7 @@ export class ResurfacingSidebarView extends ItemView {
       const item = el.createDiv("gardener-sb-item gardener-sb-mention");
       item.createEl("b", { text: entry?.title ?? path });
       item.createEl("span", { text: "mentions this note without a link" });
-      item.addEventListener("click", () => this.openNote(path));
+      item.addEventListener("click", () => { void this.openNote(path); });
       item.addClass("gardener-clickable");
     });
   }
