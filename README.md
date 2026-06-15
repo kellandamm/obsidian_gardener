@@ -1,166 +1,138 @@
-# 🌱 Gardener for Obsidian
+# Gardener for Obsidian
 
-**Your vault is full of ideas. Gardener helps you find them, connect them, and turn them into a living knowledge base — automatically.**
+Gardener is an Obsidian plugin that scans your vault and prepares reviewable suggestions for improving your notes.
 
-Gardener scans your notes while you sleep, extracts concepts and claims, surfaces connections you missed, and proposes improvements for you to review. Powered by a local or cloud LLM. You stay in control of every change.
+It helps with:
 
----
+- finding useful ideas across notes
+- suggesting links between related notes
+- identifying topics that may deserve a main note
+- surfacing possible conflicts between notes
+- finding broken links, duplicate notes, stubs, and tag issues
+
+Gardener does not silently rewrite your vault. It stages suggestions for review, and you decide what to accept, reject, snooze, or ignore.
 
 ## Why Gardener?
 
-Most people end up with hundreds of notes and no clear picture of what they actually know. Ideas sit in isolation. Duplicates pile up. Broken links go unnoticed. Insights that should connect never do.
+Obsidian vaults often grow faster than they are maintained. Notes become isolated, links go missing, duplicates appear, and useful ideas are hard to reuse.
 
-Gardener fixes this. It reads your vault the way a librarian would — finding patterns, flagging inconsistencies, and building a structured knowledge base from what you've already written. You approve what looks good and ignore the rest.
+Gardener is designed to help with that maintenance layer. It scans your existing notes, builds a local memory index, and proposes changes that can make the vault easier to navigate and use.
 
----
+## What Gardener Does
 
-## What it does
+### Scan Vault
 
-### 📚 Wiki Writer
-Gardener autonomously maintains a wiki inside your vault — no manual filing required.
+Gardener indexes Markdown files in your vault and applies the rules in `GARDENER.md`.
 
-- Reads every note in your vault
-- Creates a **source summary page** for each document (key ideas, notable claims, direct quotes)
-- Builds **concept pages** as ideas accumulate enough evidence across your notes
-- Keeps a **master index** and **scan log** updated after every run
-- Follows the [Karpathy LLM Wiki](https://github.com/karpathy/llm-wiki) pattern — raw notes stay untouched, the wiki folder is entirely Gardener-managed
+A scan can produce suggestions for:
 
-### 🧠 Knowledge Graph
-Under the hood, Gardener builds a graph of everything in your vault.
+- broken links
+- orphan notes
+- unlinked mentions
+- duplicate or overlapping notes
+- stub notes
+- inconsistent tags
+- possible conflicts between notes
+- topics that may deserve a main note
 
-- Extracts **concepts**, **claims**, and **relationships** across all notes
-- Detects **contradictions** between notes that disagree on the same topic
-- Identifies **concepts mentioned everywhere but never given their own page**
-- Tracks **claim confidence** and **source provenance**
+### Suggestions
 
-### 🔗 Structural Maintenance
-Every scan checks the health of your vault.
+All note edits are reviewable.
 
-| What Gardener finds | What it proposes |
+Gardener groups suggestions into practical categories:
+
+| Category | Purpose |
 |---|---|
-| Broken links | Fix the link |
-| Orphan notes | Connect them or flag for review |
-| Unlinked mentions | Add the missing `[[link]]` |
-| Near-duplicate notes | Merge drafts for your approval |
-| Stub notes (too short) | Auto-summarise from backlink context |
-| Notes that disagree | Flag the contradiction for resolution |
-| Tags with inconsistent casing | Normalise them |
+| New Ideas | Ideas found across your notes |
+| Main Notes | Topic pages, hub notes, and duplicate-note decisions |
+| Links | Missing links, related notes, and broken links |
+| Conflicts | Notes that may disagree or need review |
+| Cleanup | Tags, templates, stubs, and general maintenance |
 
-### 🤖 Agent Integration
-Working with Claude Code, Cursor, Codex, Windsurf, or Gemini CLI?
+You can review suggestions one by one, accept them in bulk, reject them, or snooze them.
 
-Gardener generates a schema file (`CLAUDE.md`, `.cursorrules`, `AGENTS.md`, etc.) that tells your AI agent exactly how the wiki is structured, which files it owns, which it should never touch, and how to navigate and extend the knowledge base. The schema stays in sync automatically on every scan.
+### Knowledge Garden
 
-### ✅ Batch Review
-Every suggestion Gardener makes is a proposal — nothing changes without your approval.
+Gardener maintains a local memory index under `.gardener/`.
 
-- **Batch Review modal** — grouped by category (wiki pages, ideas, links, conflicts, cleanup)
-- Accept or reject an entire category at once, or pick individual items
-- **Per-category auto-approve** — turn on any category to let Gardener apply those changes automatically
-- **Keyboard shortcuts** — `A` to accept, `R` to reject, `↑↓` to navigate
-- Reviewed items collapse automatically to keep the view clean
-- Snooze anything for 7 or 30 days
+This index can track:
 
-### 🏗️ Vault Setup
-Don't have a structured vault yet? One click creates the full Karpathy layout:
+- notes
+- topics
+- extracted ideas
+- source references
+- relationships between notes and topics
+- rejected suggestions
+- stale suggestions
+- correction history
 
-```
-raw/              ← your source material (articles, books, papers, highlights, transcripts)
-wiki/
-  index.md        ← master catalog, auto-maintained by Gardener
-  log.md          ← scan history
-  sources/        ← one summary per source document
-  concepts/       ← core ideas and domain concepts
-  people/         ← thinkers and authors
-  models/         ← mental models and frameworks
-  questions/      ← open questions under investigation
-  connections/    ← cross-domain links
-  analyses/       ← syntheses and filed query answers
-```
+The memory index is separate from your note text. Deleting `.gardener/` removes Gardener’s internal memory without deleting your notes.
 
----
+### Main Notes
 
-## Getting started
+Gardener prefers existing notes as main notes when possible.
 
-### 1. Install
-- **Community plugins** (once listed): Settings → Community plugins → search "Gardener"
-- **Manual**: download `main.js`, `manifest.json`, `styles.css` from [Releases](https://github.com/kellandamm/obsidian_gardener/releases) → copy to `.obsidian/plugins/gardener-plugin/`
+A note may be treated as a strong topic page if it has backlinks, useful tags, a matching title, or appears in a configured folder.
 
-### 2. Configure your LLM
-Settings → Gardener → **AI Provider**
+Creating a new main note is review-only. Gardener prepares the suggestion and waits for approval.
 
-| Provider | Setup |
-|---|---|
-| **Ollama** (recommended) | Install [Ollama](https://ollama.ai), run a model locally, point Gardener at `http://localhost:11434` |
-| **LM Studio** | Start the local server, use OpenAI-compatible mode at `http://localhost:1234/v1` |
-| **OpenAI** | Paste your API key — note content is sent to OpenAI |
-| **Anthropic** | Paste your API key — note content is sent to Anthropic |
+### Conflicts
 
-### 3. Set up your vault layout
-Settings → Gardener → **Vault Setup** → "Build Karpathy layout"
+Gardener can surface possible conflicts between notes and show the relevant source snippets.
 
-Creates all folders and starter files. Safe to run on an existing vault — nothing is overwritten.
+Conflict detection is advisory. Gardener does not rewrite notes to resolve conflicts.
 
-### 4. Enable Wiki Writer
-Settings → Gardener → **Wiki Writer** → toggle on
+### AI Agent Compatibility
 
-Set your folder paths (or use the defaults), then decide which categories to auto-approve.
+Gardener is not meant to replace your AI agent or chat tool.
 
-### 5. Run your first scan
-Click the 🌱 leaf icon in the ribbon → **Scan vault now**
+It prepares your vault so other tools can work with better context. You can use it alongside:
 
-Gardener scans your notes and queues proposals. Open **Batch Review** to go through them.
+- ChatGPT
+- Claude
+- Gemini
+- Cursor
+- Codex
+- Ollama
+- LM Studio
+- custom scripts
+- other Obsidian AI plugins
 
----
+The goal is to keep the useful memory layer inside your vault: notes, links, sources, review decisions, and correction history.
 
-## LLM providers
+## Privacy
 
-Gardener works fully offline with Ollama or LM Studio. No data ever leaves your machine unless you choose a cloud provider.
+Gardener is local-first by default.
 
-| Provider | Data stays local | Requires API key |
-|---|---|---|
-| Ollama | ✅ Yes | No |
-| LM Studio | ✅ Yes | No |
-| OpenAI | ❌ No | Yes |
-| Anthropic | ❌ No | Yes |
+Structural tasks such as broken-link checks, orphan detection, tag cleanup, and duplicate detection can run without an LLM.
 
-> **Privacy note:** When a cloud provider is selected, note content is sent to that provider's API for processing. API keys are stored in Obsidian plugin data (not encrypted). Use Ollama or LM Studio to keep everything on-device.
+AI-backed tasks use the provider you configure.
 
----
+| Provider | Local | API key required |
+|---|---:|---:|
+| Ollama | Yes | No |
+| LM Studio / OpenAI-compatible local server | Yes | Usually no |
+| OpenAI | No | Yes |
+| Anthropic | No | Yes |
 
-## Views
+If you use a cloud provider, relevant note content may be sent to that provider.
 
-| View | What it shows |
-|---|---|
-| **Suggestions** | Card-by-card review with keyboard shortcuts |
-| **Batch Review** | All suggestions grouped by category — bulk accept/reject |
-| **Vault Dashboard** | Orphans, broken links, stubs, and overall vault health |
-| **Knowledge Graph** | Disconnected clusters and tag co-occurrence heatmap |
-| **Wiki Memory** | Extracted concepts, claims, contradictions, and source provenance |
-| **Writing Velocity** | Word count trends over time (12-week chart) |
-| **Change History** | Browse and undo every change Gardener has applied |
+Use `GARDENER.md` to mark private folders as `never-read`. Gardener should not index or send `never-read` content to an LLM.
 
----
+## Getting Started
 
-## Settings highlights
+### Install
 
-- **Auto-approve threshold** — proposals above this confidence score apply automatically (0 = always review)
-- **Per-category auto-approve** — enable wiki pages, ideas, links, conflicts, or cleanup independently
-- **Dry run** — see every proposal without writing anything to disk
-- **Excluded folders** — tell Gardener which folders to skip entirely
-- **Run schedule** — scans overnight by default (configurable)
-- **Batch size** — cap how many changes apply per scan
+Manual installation:
 
----
+1. Build or download the plugin files.
+2. Copy these files into your vault plugin folder:
 
-## Requirements
-
-- Obsidian 0.15.0 or later
-- Desktop only (Windows, macOS, Linux)
-- An LLM provider (local or cloud) for AI-powered features — structural tasks (broken links, orphans, etc.) run without one
-
----
-
+```text
+.obsidian/plugins/obsidian-gardener/
+  manifest.json
+  main.js
+  styles.css
 ## License
 
 MIT — see [LICENSE](LICENSE)
